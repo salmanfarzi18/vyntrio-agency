@@ -1,0 +1,1 @@
+export function Brand({inverse=false,subtitle='WORKSPACE'}:{inverse?:boolean,subtitle?:string}){return <a className={'brand '+(inverse?'brand-inverse':'')} href="/"><img src="/logo.png" alt="" width="38" height="38"/><span>VYNTRIO<small>{subtitle}</small></span></a>;}

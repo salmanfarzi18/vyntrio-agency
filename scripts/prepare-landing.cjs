@@ -1,0 +1,1 @@
+const fs=require('fs');let html=fs.readFileSync('public/landing.html','utf8');html=html.replace("['1:959','1:962','1:965','1:1060']","['1:959','1:962','1:965']");if(!html.includes('/landing-portal.js'))html=html.replace('</body>','<script src="/landing-portal.js" defer></script></body>');fs.writeFileSync('public/landing.html',html);

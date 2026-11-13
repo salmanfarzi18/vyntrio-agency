@@ -1,0 +1,5 @@
+import {requireIdentity} from '@/lib/auth';
+import {adminDb} from '@/lib/supabase';
+import {assert,errorResponse,verifyReceipt} from '@/lib/security';
+import {env} from '@/lib/config';
+export async function GET(request:Request){try{const url=new URL(request.url),orderId=url.searchParams.get('order_id');assert(orderId&&/^vyn_[a-f0-9]{32}$/.test(orderId),400,'Invalid order.');const db=adminDb();const {data:order}=await db.from('payment_orders').select('order_id,status,inquiry_id,invoice_id,amount_paise').eq('order_id',orderId).single();assert(order,404,'Order not found.');if(order.inquiry_id)assert(verifyReceipt(request.headers.get('x-inquiry-token')||'',order.inquiry_id,env('PAYMENT_LINK_SECRET')),403,'Please return to your inquiry to check this payment.');else{const current=await requireIdentity();const {data}=await current.db.from('payment_orders').select('order_id').eq('order_id',orderId).single();assert(data,404,'Order not found.');}return Response.json({ok:true,status:order.status,amountPaise:order.amount_paise},{headers:{'Cache-Control':'no-store'}});}catch(error){return errorResponse(error);}}

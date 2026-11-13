@@ -1,0 +1,2 @@
+'use client';
+export default function ErrorPage({reset}:{reset:()=>void}){return <main className="standalone"><span className="eyebrow">SOMETHING NEEDS ATTENTION</span><h1>We couldn’t load this page.</h1><p>Your work is still safe. Please retry or contact VYNTRIO if the problem continues.</p><button className="button primary" onClick={reset}>Try again</button><a href="mailto:vyntrioagency@gmail.com">Contact support</a></main>;}

@@ -1,0 +1,28 @@
+import {after} from 'next/server';
+import {adminDb} from '@/lib/supabase';
+import {configured,env,legacyUrl} from '@/lib/config';
+import {assert,errorResponse,matchLegacy,verifyCashfree} from '@/lib/security';
+import {dispatchEmails,queueEmail} from '@/lib/notifications';
+export const runtime='nodejs';
+export function GET(){return Response.json({ok:true,service:'VYNTRIO Cashfree webhook'});}
+export async function POST(request:Request){try{assert(Number(request.headers.get('content-length')||0)<=262144,413,'Payload too large.');const raw=await request.text();assert(Buffer.byteLength(raw)<=262144,413,'Payload too large.');const timestamp=request.headers.get('x-webhook-timestamp')||'',signature=request.headers.get('x-webhook-signature')||'';
+ assert(/^\d{10,16}$/.test(timestamp)&&/^[A-Za-z0-9+/]{43}=$/.test(signature),401,'Missing signature.');
+ if(!configured()){const response=await fetch(legacyUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'cashfreeWebhook',rawBody:raw,timestamp,signature}),signal:AbortSignal.timeout(25000)});const result=await response.json();assert(response.ok&&result.ok===true,result.code==='invalid_signature'?401:503,'Payment notification could not be verified.');return Response.json({ok:true});}
+ assert(verifyCashfree(raw,timestamp,signature,env('CASHFREE_SECRET_KEY')),401,'Invalid signature.');const event=JSON.parse(raw),db=adminDb();
+ if(event.type==='PAYMENT_FORM_ORDER_WEBHOOK'){
+  const order=event.data?.order,form=event.data?.form;if(form?.form_url?.replace(/\/$/,'')!=='https://payments.cashfree.com/forms/vyntrio-project-inquiry'||order?.order_status!=='PAID')return Response.json({ok:true,ignored:true});
+  assert(form.form_currency==='INR'&&Number(order.order_amount)===1&&String(order.order_id).startsWith('CFPay_vyntrio-project-inquiry_')&&order.transaction_id,400,'Unexpected payment.');const customer=order.customer_details||{};
+  const {data:existing}=await db.from('legacy_payments').select('id').eq('cashfree_payment_id',String(order.transaction_id)).maybeSingle();if(existing)return Response.json({ok:true,duplicate:true});
+  const {data:candidates,error:lookupError}=await db.from('inquiries').select('id,name,email,phone,payment_status').or('email.eq.'+String(customer.customer_email||'').replace(/[,()]/g,'')+',phone.eq.'+String(customer.customer_phone||'').replace(/[,()]/g,'')).limit(100);if(lookupError)throw lookupError;
+  const matched=matchLegacy({name:customer.customer_name,email:customer.customer_email,phone:customer.customer_phone},candidates||[]);
+  const {error}=await db.from('legacy_payments').insert({order_id:order.order_id,cashfree_payment_id:String(order.transaction_id),amount_paise:100,customer_name:customer.customer_name,customer_email:customer.customer_email,customer_phone:customer.customer_phone,inquiry_id:matched,match_status:matched?'matched':'needs_review',verified_by:'Cashfree signature',paid_at:event.event_time});if(error&&error.code!=='23505')throw error;if(matched)await db.from('inquiries').update({payment_status:'paid'}).eq('id',matched);
+  // Keep existing Sheets payment notifications during migration; database is authoritative for the portal.
+  after(async()=>{try{await fetch(legacyUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'cashfreeWebhook',rawBody:raw,timestamp,signature}),signal:AbortSignal.timeout(20000)});}catch{console.error('Legacy Sheets payment mirror needs reconciliation.');}});
+  return Response.json({ok:true,matched:!!matched});
+ }
+ if(event.type!=='PAYMENT_SUCCESS_WEBHOOK')return Response.json({ok:true,ignored:true});const order=event.data?.order,payment=event.data?.payment;
+ if(payment?.payment_status!=='SUCCESS')return Response.json({ok:true,ignored:true});assert(order?.order_id&&payment.cf_payment_id&&payment.payment_currency==='INR',400,'Unexpected payment.');const paise=Math.round(Number(payment.payment_amount)*100);assert(Number.isSafeInteger(paise)&&paise>0&&Math.abs(Number(payment.payment_amount)*100-paise)<0.0001,400,'Invalid payment amount.');
+ const {data:record,error}=await db.rpc('record_verified_payment',{p_order:order.order_id,p_payment:String(payment.cf_payment_id),p_amount:paise,p_paid_at:payment.payment_time||event.event_time,p_source:'Cashfree signature'});if(error)throw error;
+ {let email='';if(record.inquiry_id){const {data}=await db.from('inquiries').select('email').eq('id',record.inquiry_id).single();email=data?.email||'';}else if(record.invoice_id){const {data}=await db.from('invoices').select('project_id').eq('id',record.invoice_id).single();if(data){const {data:p}=await db.from('projects').select('client_id').eq('id',data.project_id).single();if(p){const {data:c}=await db.from('profiles').select('email').eq('id',p.client_id).single();email=c?.email||'';}}}if(email)await queueEmail('payment:'+payment.cf_payment_id,email,'VYNTRIO payment received',`Your payment of INR ${(paise/100).toFixed(2)} has been verified.\nOrder: ${order.order_id}\nCashfree transaction: ${payment.cf_payment_id}\n\nThank you,\nVYNTRIO Agency`);await queueEmail('payment-admin:'+payment.cf_payment_id,env('ADMIN_EMAIL'),'VYNTRIO payment received',`INR ${(paise/100).toFixed(2)} verified.\nOrder: ${order.order_id}\nTransaction: ${payment.cf_payment_id}`);}
+ after(()=>dispatchEmails(2).catch(()=>{}));return Response.json({ok:true,duplicate:!!record.duplicate});
+ }catch(error){return errorResponse(error);}}
