@@ -41,3 +41,8 @@ The SaaS is deployed at https://vyntrio-agency.vercel.app. This is a deployment 
 4. Complete the remaining customer, file and recovery acceptance checks before describing the system as fully verified.
 
 The older LIVE_AUDIT_STATUS.md describes the preceding audit. This release record supersedes its earlier statements that main and Production were unchanged.
+
+## Checkout expiry correction
+After the owner corrected the private Production key pair, Cashfree accepted the read-only API check and checkout was enabled for a manual test. That test hit `order_expiry_time_invalid` during order creation; it did not reach a created Cashfree order in the inspected failures. No signed payment or bank settlement is inferred from a failed creation request.
+
+The fix converts the persisted PostgreSQL timestamp to whole-second UTC ISO before sending it to Cashfree. A separate migration sets new reservations to a whole-second 30-minute window. Existing order/payment records are not rewritten. Regression tests cover timestamp precision, offsets, stable retry payloads, near-expiry rejection and the database lease duration. Nineteen tests and the production build pass; a fresh live checkout still requires user verification.
