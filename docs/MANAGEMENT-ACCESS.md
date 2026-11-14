@@ -57,3 +57,5 @@ If delivery fails during activation, an authorized database administrator can re
 ## Validation
 
 Automated checks cover wrong passwords, client-to-team access denial, cross-origin rejection, factor substitution, wrong codes, password recovery restrictions, pinned phone selection and database enforcement of password/AAL2/phone claims. Real owner password entry, authenticator confirmation and real SMS delivery require the owner to complete those private steps. Do not treat mock tests as proof of real SMS delivery.
+
+Current configuration note: Supabase leaked-password protection is disabled. Review https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection and enable it if your plan supports it before wider staff rollout. Do not purchase a plan automatically. Existing MFA and password rules remain enforced.

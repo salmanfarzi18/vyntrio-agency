@@ -13,7 +13,7 @@ export default async function LoginPage({searchParams}:{searchParams:Promise<{ex
    <Brand inverse/>
    <div className="story-body">
     <span className="eyebrow light">IDEAS INTO REALITY. TOGETHER.</span>
-    <h1>Great projects.<br/>Clear progress.<br/><span>One workspace.</span></h1>
+    <h1>Great projects.<br/>{' '}Clear progress.<br/><span>One workspace.</span></h1>
     <p>A shared space for your ideas, milestones, and everything we’re building together.</p>
     <div className="story-project">
      <div className="story-project-top"><span className="story-icon"><Layers3 size={23}/></span><span>Your next big idea<small>Built with VYNTRIO</small></span><span className="mini-pill">Connected</span></div>
