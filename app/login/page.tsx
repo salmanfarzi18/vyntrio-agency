@@ -45,7 +45,7 @@ export default async function LoginPage({searchParams}:{searchParams:Promise<{ex
     <h3 className="workspace-signin-title">Your workspace sign-in</h3>
     <p className="workspace-signin-note">Completed both steps? Use the same email you shared with us.</p>
     <LoginForm enabled={configured()} expired={query.expired==='1'}/>
-    <p className="existing-access-note">Existing project clients and the VYNTRIO team can use their invited email.</p>
+    <p className="existing-access-note">Existing project clients can use their invited email. VYNTRIO team? <a href="/management/login">Management sign-in →</a></p>
     <div className="help-line">A little help getting started? <a href="mailto:vyntrioagency@gmail.com">Talk to our team <ArrowUpRight size={14}/></a></div>
    </div>
    <footer>© {new Date().getFullYear()} VYNTRIO Agency <a href="mailto:vyntrioagency@gmail.com">Need help?</a></footer>

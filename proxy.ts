@@ -4,4 +4,4 @@ export async function proxy(request:NextRequest){let response=NextResponse.next(
  const db=createServerClient(url,key,{cookies:{getAll:()=>request.cookies.getAll(),setAll:items=>{items.forEach(({name,value})=>request.cookies.set(name,value));response=NextResponse.next({request});items.forEach(({name,value,options})=>response.cookies.set(name,value,options));}}});
  await db.auth.getClaims();return response;
 }
-export const config={matcher:['/login','/portal/:path*','/api/portal/:path*','/auth/:path*']};
+export const config={matcher:['/management/:path*','/api/management/:path*','/login','/portal/:path*','/api/portal/:path*','/auth/:path*']};

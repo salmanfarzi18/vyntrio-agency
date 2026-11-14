@@ -13,6 +13,7 @@ export async function POST(request:Request){try{
  await limit(request,'login-email',4,3600,input.email);
  await captcha(input.turnstileToken);
  const access=await workspaceAccess(adminDb(),input.email,env('ADMIN_EMAIL'));
+ if(access.allowed&&['owner','team'].includes(access.reason))return Response.json({ok:true,next:'management_login',message:'Welcome, VYNTRIO team. Please use your separate management sign-in with your work email, password and two-step verification.'},{headers:{'Cache-Control':'no-store'}});
  if(!access.allowed)return Response.json({ok:true,next:'complete_inquiry',message:'Let’s get your workspace ready. Please complete your project inquiry and ₹1 confirmation using this email. Once your payment is verified, we’ll email your private sign-in link. Already completed both? Please check your inquiry email or contact our team for a little help.'},{headers:{'Cache-Control':'no-store'}});
  await loginEmail(input.email);
  return Response.json({ok:true,next:'check_inbox',message:'You’re all set! We’ve sent your private sign-in link to this email. It should arrive shortly—please check your inbox and spam folder.'},{headers:{'Cache-Control':'no-store'}});
