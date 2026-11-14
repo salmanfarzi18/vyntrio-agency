@@ -18,10 +18,16 @@ test('Payment connection never treats rejected access, a generic 404 or a timeou
   for(const status of [401,403,404,429,500]){
     const result=await checkPaymentConnection(settings,async()=>Response.json({code:'unexpected',secret:'private-secret'},{status}));
     assert.notEqual(result.status,'accepted');assert(!JSON.stringify(result).includes('private-secret'));
+    if(status===401||status===403){assert.equal(result.providerStatus,status);assert.match(result.message,new RegExp('HTTP '+status));}
   }
   assert.equal((await checkPaymentConnection(settings,async()=>{throw Error('private-secret');})).status,'unconfirmed');
   const never=async()=>{throw Error('must not request');};
   assert.equal((await checkPaymentConnection({...settings,mode:'prod'},never)).status,'needs_setup');
   assert.equal((await checkPaymentConnection({...settings,secretKey:''},never)).status,'needs_setup');
   assert.equal((await checkPaymentConnection({...settings,secretKey:' trailing '},never)).status,'needs_setup');
+});
+test('Online checkout fails closed until explicitly enabled',async()=>{
+  const {paymentsEnabled}=await import('../lib/config');const saved=process.env.PAYMENTS_ENABLED;
+  try{for(const value of [undefined,'false','1','TRUE','true ']){if(value===undefined)delete process.env.PAYMENTS_ENABLED;else process.env.PAYMENTS_ENABLED=value;assert.equal(paymentsEnabled(),false);}process.env.PAYMENTS_ENABLED='true';assert.equal(paymentsEnabled(),true);}
+  finally{if(saved===undefined)delete process.env.PAYMENTS_ENABLED;else process.env.PAYMENTS_ENABLED=saved;}
 });

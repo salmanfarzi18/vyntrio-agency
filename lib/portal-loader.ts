@@ -1,9 +1,10 @@
 
+import {paymentsEnabled} from './config';
 import {resources,type Resource} from './resources';
 import type {Identity} from './auth';
 export type Row=Record<string,any>;
-export type PortalData={section:string,id?:string,role:string,name:string,email:string,userId:string,profile:Row,summary:Row,rows:Row[],total:number,projects:Row[],clients:Row[],updates:Row[],milestones:Row[],invoices:Row[],quotes:Row[],files:Row[],tickets:Row[],messages:Row[],monthly?:Row[],team?:Row[],members?:Row[],project?:Row,preview?:boolean};
-export async function portalData(current:Identity,section:string,id?:string):Promise<PortalData>{const db=current.db;const result:PortalData={section,id,role:current.role,name:current.profile?.full_name||current.user.email!.split('@')[0],email:current.user.email!,userId:current.user.id,profile:current.profile||{},summary:{},rows:[],total:0,projects:[],clients:[],updates:[],milestones:[],invoices:[],quotes:[],files:[],tickets:[],messages:[]};
+export type PortalData={section:string,id?:string,role:string,name:string,email:string,userId:string,profile:Row,summary:Row,rows:Row[],total:number,projects:Row[],clients:Row[],updates:Row[],milestones:Row[],invoices:Row[],quotes:Row[],files:Row[],tickets:Row[],messages:Row[],monthly?:Row[],team?:Row[],members?:Row[],project?:Row,preview?:boolean,paymentsEnabled?:boolean};
+export async function portalData(current:Identity,section:string,id?:string):Promise<PortalData>{const db=current.db;const result:PortalData={section,id,paymentsEnabled:paymentsEnabled(),role:current.role,name:current.profile?.full_name||current.user.email!.split('@')[0],email:current.user.email!,userId:current.user.id,profile:current.profile||{},summary:{},rows:[],total:0,projects:[],clients:[],updates:[],milestones:[],invoices:[],quotes:[],files:[],tickets:[],messages:[]};
  // All work is scoped to this request's authenticated client; do not cache
  // private results across requests or users. Fetch independent data together.
  const pending:Promise<void>[]=[];

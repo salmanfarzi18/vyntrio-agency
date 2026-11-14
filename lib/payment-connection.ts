@@ -17,8 +17,15 @@ export async function checkPaymentConnection(
       headers:{'x-client-id':settings.clientId,'x-client-secret':settings.secretKey,'x-api-version':'2025-01-01'},
       signal:AbortSignal.timeout(15000),
     });
-    if(response.status===401||response.status===403)return {status:'rejected',message:'Cashfree rejected access. Check that the App ID and Secret Key belong to the same account and payment mode, and review account access restrictions.'};
     const body=await response.json().catch(()=>null);
+    const providerCode=typeof body?.code==='string'&&/^[a-z_]{1,80}$/.test(body.code)?body.code:undefined;
+    if(response.status===401||response.status===403){
+      const message=response.status===401
+        ?`Cashfree returned HTTP 401: authentication failed. Re-enter the matching ${mode==='production'?'Production':'Test'} Payment Gateway App ID and Secret Key for this environment. Do not use credentials from another payment mode or Payouts.`
+        :'Cashfree returned HTTP 403: access was forbidden. Check Payment Gateway API activation and account/IP access restrictions in Cashfree; do not disable security protections blindly.';
+      console.warn('Cashfree connection check rejected',{status:response.status,code:providerCode||'not_provided',mode});
+      return {status:'rejected',providerStatus:response.status,providerCode,message};
+    }
     // A generic proxy 404 is not evidence of accepted credentials.
     if(response.status===404&&body?.code==='order_not_found')return {status:'accepted',message:'Cashfree accepted this read-only API check. Checkout and webhook delivery still need verification.'};
     return {status:'unconfirmed',message:'Cashfree did not return the expected authentication-check response. Review its API logs; no payment was created.'};

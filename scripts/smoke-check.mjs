@@ -20,6 +20,7 @@ await expect('/api/portal/payment-connection',403,{method:'POST'});
 await expect('/api/portal/payment-connection',401,{method:'POST',headers:{Origin:base}});
 await expect('/api/inquiries',400,{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:'{}'});
 await expect('/api/cashfree-webhook',401,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-response=await expect('/api/config',200);const config=await response.json();assert.deepEqual(Object.keys(config).sort(),['cashfreeMode','portalEnabled','turnstileSiteKey']);
+response=await expect('/api/config',200);const config=await response.json();assert.deepEqual(Object.keys(config).sort(),['cashfreeMode','paymentsEnabled','portalEnabled','turnstileSiteKey']);
+if(!config.paymentsEnabled)await expect('/api/payments/create',503,{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:'{}'});
 console.log(JSON.stringify({passed:checks.length,checks,note:'Only anonymous access and invalid-input checks ran; no inquiry, email, or payment was created.'},null,2));
 

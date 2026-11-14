@@ -38,6 +38,7 @@ Open your EXISTING Vercel project → Settings → Environment Variables. Put re
 | CASHFREE_CLIENT_ID | Cashfree credentials matching the selected mode |
 | CASHFREE_SECRET_KEY | Cashfree secret matching the selected mode |
 | CASHFREE_ENV | `sandbox` for testing; `production` for real payments |
+| PAYMENTS_ENABLED | Keep `false` until credentials are accepted and checkout is approved for testing; only explicit `true` enables order creation |
 | EMAIL_PROVIDER | `apps-script` |
 | EMAIL_BRIDGE_URL | New Google SaaS Services `/exec` URL |
 | EMAIL_BRIDGE_SECRET | New bridge's `SAAS_BRIDGE_SECRET` property |

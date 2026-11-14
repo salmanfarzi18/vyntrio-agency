@@ -6,8 +6,8 @@ The SaaS is deployed at https://vyntrio-agency.vercel.app. This is a deployment 
 - Website: https://vyntrio-agency.vercel.app/
 - Sign-in: https://vyntrio-agency.vercel.app/login
 - Owner/client workspace: https://vyntrio-agency.vercel.app/portal
-- Application release: b0ec304501853816b83a6b71fa08d653396af24a, main branch.
-- Production deployment: dpl_6HBjCkp2TniWow2yx4GqfV6USqAa, READY.
+- Initial application release: b0ec304501853816b83a6b71fa08d653396af24a, main branch. Subsequent main commits record the launch and add the checkout pause described below.
+- Initial promoted deployment: dpl_6HBjCkp2TniWow2yx4GqfV6USqAa, READY. Current deployment follows the latest successful main build.
 - Function region: hnd1 (Tokyo); Node.js 22; Next.js.
 - Previous production deployment retained for rollback: dpl_S6riB3Nrhtj2A9D5jcAKZCt6i9s2. Do not delete it until the new customer flows are accepted.
 
@@ -27,16 +27,17 @@ The SaaS is deployed at https://vyntrio-agency.vercel.app. This is a deployment 
 - A Production error/fatal log query returned no entries for the inspected fifteen-minute window. This is a bounded observation, not an uptime guarantee.
 
 ## Still requires acceptance
-- Owner sign-in on the new public hostname and authenticator completion. The previous Preview login was verified; a new hostname needs its own browser session.
-- Cashfree authenticated connection check, a user-performed real payment, and signed webhook success/duplicate handling. No real payment was initiated by the agent. The unsigned webhook endpoint is externally reachable and rejects missing signatures.
+- Owner sign-in on the public hostname and authenticator completion were subsequently confirmed by the owner. A missing-email concern was resolved by using the agency Gmail inbox instead of the connected personal Gmail account. No private sign-in link or authenticator code was read.
+- The owner ran the Production Cashfree connection check: access was rejected (the initial UI grouped 401/403). New online checkout is paused with PAYMENTS_ENABLED=false while this is corrected. Inquiry saving, sign-in and the dashboard stay available. The improved check reports the safe HTTP status/category without returning keys.
+- Cashfree authenticated connection, a user-performed real payment, and signed webhook success/duplicate handling remain unfinished. No real payment was initiated by the agent. The unsigned webhook endpoint is externally reachable and rejects missing signatures.
 - Client approvals/replies, live private-file upload/download, full restore into an empty target, and legacy report/import reconciliation remain unfinished.
 - Consumer email quotas, Supabase Free availability and commercial hosting suitability remain operational limits to review. There is no promise of zero delay, perfect security or guaranteed inbox placement.
 - Rotate the previously shared authenticator setup if that enrollment has not already been replaced; never share a setup QR, setup key, email link or one-time code.
 
 ## Owner's next checks
 1. Sign in using vyntrioagency@gmail.com. In Gmail, use that account's inbox, not another connected personal account. Open the newest VYNTRIO sign-in email privately and complete the existing authenticator step.
-2. Open Workspace Settings and select Check payment connection. It checks API authentication without creating an order or charging money.
-3. Only after accepted credentials, submit a clearly labelled test inquiry and perform the INR 1 payment yourself. Confirm the payment/order identifiers and paid status in the workspace, separately from bank settlement in Cashfree.
+2. Open Workspace Settings and select Check payment connection once. HTTP 401 requires the matching Production Payment Gateway key pair to be re-entered privately in Vercel and redeployed. HTTP 403 requires review of account/API activation and access restrictions. Do not blindly disable IP restrictions or share credentials.
+3. Keep PAYMENTS_ENABLED=false until the read-only connection check is accepted. Enabling checkout requires an explicit true value and redeployment; then perform the INR 1 test yourself against a labelled inquiry. Confirm payment/order identifiers and paid status in the workspace, separately from bank settlement in Cashfree. A failed checkout must not stop inquiry saving.
 4. Complete the remaining customer, file and recovery acceptance checks before describing the system as fully verified.
 
 The older LIVE_AUDIT_STATUS.md describes the preceding audit. This release record supersedes its earlier statements that main and Production were unchanged.
