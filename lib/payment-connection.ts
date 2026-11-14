@@ -12,7 +12,7 @@ export async function checkPaymentConnection(
   if(settings.clientId!==settings.clientId.trim()||settings.secretKey!==settings.secretKey.trim())return {status:'needs_setup',message:'Remove leading or trailing spaces from the saved Cashfree credentials.'};
   const base=mode==='production'?'https://api.cashfree.com/pg':'https://sandbox.cashfree.com/pg';
   try{
-    const response=await request(base+'/orders/vyn_connection_'+randomUUID().replaceAll('-',''),{
+    const response=await request(base+'/orders/vyn_check_'+randomUUID().replaceAll('-',''),{
       method:'GET',cache:'no-store',redirect:'error',
       headers:{'x-client-id':settings.clientId,'x-client-secret':settings.secretKey,'x-api-version':'2025-01-01'},
       signal:AbortSignal.timeout(15000),

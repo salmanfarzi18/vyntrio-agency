@@ -6,8 +6,8 @@ test('Payment connection checks are read-only, mode-bound and never return crede
   for(const mode of ['sandbox','production']){
     let calls=0;
     const result=await checkPaymentConnection({mode,clientId:'private-app',secretKey:'private-secret'},async(url,options)=>{
-      calls++;assert.match(String(url),new RegExp('^https://'+(mode==='production'?'api':'sandbox')+'\\.cashfree\\.com/pg/orders/vyn_connection_[a-f0-9]{32}$'));
-      assert.equal(options?.method,'GET');assert.equal(options?.body,undefined);assert.equal(options?.redirect,'error');
+      calls++;assert.match(String(url),new RegExp('^https://'+(mode==='production'?'api':'sandbox')+'\\.cashfree\\.com/pg/orders/vyn_check_[a-f0-9]{32}$'));
+      assert(new URL(String(url)).pathname.split('/').at(-1)!.length<=45);assert.equal(options?.method,'GET');assert.equal(options?.body,undefined);assert.equal(options?.redirect,'error');
       return Response.json({code:'order_not_found'},{status:404});
     });
     assert.equal(calls,1);assert.equal(result.status,'accepted');assert(!JSON.stringify(result).includes('private-'));
