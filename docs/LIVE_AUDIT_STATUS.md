@@ -4,9 +4,9 @@
 The SaaS preview has been deployed and audited. It is not yet approved for production cutover. The existing main website remains separate and unchanged.
 
 ## Automated checks
-- 10 passing Node tests, including an embedded PostgreSQL policy/payment suite and a browser-handler simulation that verifies stable inquiry references across rotating Cloudflare tokens.
+- 15 passing Node tests, including an embedded PostgreSQL policy/payment suite, a browser-handler simulation that verifies stable inquiry references across rotating Cloudflare tokens, read-only payment authentication checks, and concurrent request/user isolation of dashboard loading.
 - TypeScript checks and successful Next.js production builds.
-- 15 local production HTTP checks: landing/login, protected routes, CSRF rejection, unsigned webhook rejection, invalid inquiries, private backup denial, disabled production demo route, and public config shape.
+- 15 local production HTTP checks passed on the earlier audited build. The current suite has 17 checks, adding protected payment diagnostics and no-store assertions for private API denial responses. Rerunning the current suite was blocked by local network access (EACCES/timeout), so the latest 17-check suite is not recorded as passing.
 - Signature, receipt expiry/binding, amount precision, encrypted-backup tamper/wrong-key rejection, Google bridge request/message deduplication, and CSV escaping.
 
 ## Live checks completed
@@ -27,12 +27,19 @@ The SaaS preview has been deployed and audited. It is not yet approved for produ
 - Fixed two mutable function search paths, removed browser execution grants on trigger functions, added 17 relationship indexes, and cached caller identity in seven RLS policies. The complete policy tests pass after the migration.
 
 ## Unfinished live acceptance checks
+- Latest connection-check observation: Preview has no CASHFREE_ENV and reports missing payment configuration. Production-only values are not tested by a Preview build. Earlier 401 below refers to the previously configured audited Sandbox build, not a fresh test of Production keys.
 - Cashfree Sandbox rejects the configured Preview key pair with HTTP 401 on the audited build. Order reservation succeeds; gateway checkout does not yet pass. Private values must be corrected by the owner and retested.
 - External requests to the preview webhook hit Vercel Authentication. A proper reachable staging webhook path and signed Cashfree success/deduplication test are still needed; no protection was disabled.
 - File selection through the browser extension remains blocked despite the user's permission change. Live upload/download is unverified. The portal backup-download browser event also timed out; successful Drive retrieval does not prove that portal download flow.
 - Client milestone approval, quotation response and reply require the final customer-side interaction checks. Do not treat database read probes as a substitute for these UI actions.
 - Full recovery into a fresh empty target, automatic scheduled production maintenance, Sheets reporting/import reconciliation, staff UI access, and production commercial hosting suitability are not signed off.
 - A setup-key screenshot was previously shared; the owner must confirm fresh authenticator enrollment replaced that setup before launch. No setup key is included in this source.
+
+## Speed and privacy follow-up
+- Independent page queries now run concurrently using the current request's authenticated database client. Workspace Settings no longer fetches unused project/client/team lists (one summary query instead of four application queries, excluding identity checks).
+- Internal workspace navigation uses Next.js links, with a branded loading state and a generic retry page. Download endpoints remain ordinary download links.
+- API and auth responses explicitly request private/no-store caching; no cross-user data cache or optimistic payment success was introduced. A staff notification link now points to a permitted project page.
+- These changes pass local tests and build. They are not a measured live latency guarantee. Browser-based Production inspection was stopped by an automatic approval-review usage limit; no restriction was bypassed and no Production deployment was changed.
 
 ## Advisor notices retained intentionally
 - rate_limits is server-only with RLS and no client policy (default deny).
