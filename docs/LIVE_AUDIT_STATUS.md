@@ -1,5 +1,7 @@
 # VYNTRIO live SaaS audit - 14 November 2026
 
+**Later update:** the user subsequently authorized launch. The SaaS is now deployed on the public domain. See RELEASE_STATUS.md for the deployed version, live HTTP checks and remaining acceptance items. Statements below about an unchanged Production site refer to the earlier audit stage.
+
 ## Release verdict
 The SaaS preview has been deployed and audited. It is not yet approved for production cutover. The existing main website remains separate and unchanged.
 
