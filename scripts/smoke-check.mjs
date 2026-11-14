@@ -3,7 +3,7 @@ const base=process.env.SMOKE_BASE||'http://localhost:3000';
 const checks=[];
 async function expect(path,status,options={}){const response=await fetch(base+path,{redirect:'manual',...options});assert.equal(response.status,status,path);checks.push({path,status});return response;}
 let response=await expect('/',200);const html=await response.text();assert(html.includes('VYNTRIO'));assert(html.includes('/landing-portal.js'));assert(html.includes('action="/api/inquiries"'));
-await expect('/login',200);
+const login=await expect('/login',200);const loginHtml=await login.text();assert(loginHtml.includes('Start my project inquiry'));assert(loginHtml.includes('Share your project'));assert(loginHtml.includes('Confirm with ₹1'));assert(loginHtml.includes('private workspace sign-in link'));
 // A loading boundary can stream the shell before the auth guard redirects.
 // Check the exact login redirect, rather than mistaking the HTTP 200 shell
 // for authenticated access. No private workspace may be rendered there.

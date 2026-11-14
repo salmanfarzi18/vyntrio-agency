@@ -6,8 +6,8 @@ export function LoginForm({enabled,expired}:{enabled:boolean,expired:boolean}){c
  {expired&&<div className="notice warning">That sign-in link has expired or was already used. Request a fresh link below.</div>}
  {!enabled&&<div className="notice warning">Your workspace is being prepared. Contact VYNTRIO for access.</div>}
  <label htmlFor="email">Email address</label><div className="input-icon"><Mail size={18}/><input id="email" name="email" type="email" autoComplete="email" placeholder="you@company.com" required maxLength={254}/></div>
- <p className="field-note">Use the email address invited to your project.</p><Turnstile onToken={setToken} resetKey={reset}/>
+ <p className="field-note">Your link goes only to this inbox. Please use your inquiry or invited email.</p><Turnstile onToken={setToken} resetKey={reset}/>
  <button className="button primary full" disabled={busy||!enabled} type="submit">{busy?'Sending your secure link…':'Email me a sign-in link'}<ArrowRight size={18}/></button>
  {message&&<p role="status" className={'notice '+(error?'error':'success')}>{!error&&<CheckCircle2 size={18}/>} {message}</p>}
- <p className="login-footnote">No password to remember. Your personal sign-in link is sent to your inbox.</p>
+ <p className="login-footnote">A personal link, delivered privately. No password to remember.</p>
  </form>;}
