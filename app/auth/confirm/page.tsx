@@ -1,3 +1,4 @@
 import {Brand} from '@/components/brand';
 import {ConfirmSignIn} from '@/components/confirm-sign-in';
-export default function ConfirmPage(){return <main className="standalone"><Brand/><span className="eyebrow">YOUR PRIVATE WORKSPACE</span><h1>Ready to sign in?</h1><p>Continue to securely open your VYNTRIO workspace.</p><ConfirmSignIn/></main>;}
+export const metadata={robots:{index:false,follow:false}};
+export default async function ConfirmPage({searchParams}:{searchParams:Promise<{purpose?:string}>}){const recovery=(await searchParams).purpose==='management-reset';return <main className="standalone"><Brand subtitle={recovery?'MANAGEMENT':'WORKSPACE'}/><span className="eyebrow">{recovery?'PRIVATE PASSWORD RECOVERY':'YOUR PRIVATE WORKSPACE'}</span><h1>{recovery?'Reset your management password.':'Ready to sign in?'}</h1><p>{recovery?'First, verify this private email link. We’ll then ask for your authenticator code before you choose a new password.':'Continue to securely open your VYNTRIO workspace.'}</p><ConfirmSignIn recovery={recovery}/></main>;}

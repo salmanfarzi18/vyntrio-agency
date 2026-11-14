@@ -37,3 +37,13 @@ export async function loginEmail(email:string,welcome=false){
  return data.user;
 }
 export const projectNotice=(title:string,message:string)=>`${title}\n\n${message}\n\nView your project securely: ${siteUrl()}/portal\n\nVYNTRIO Agency`;
+export async function managementRecoveryEmail(email:string){
+ email=email.trim().toLowerCase();const service=adminDb(),access=await workspaceAccess(service,email,env('ADMIN_EMAIL'));
+ assert(access.allowed&&['owner','team'].includes(access.reason),403,'Management account setup is available to invited team members only.');
+ await ensureAccount(email);
+ const {data,error}=await service.auth.admin.generateLink({type:'recovery',email,options:{redirectTo:siteUrl()+'/auth/confirm'}});
+ if(error||!data.properties?.hashed_token)throw new Error('Unable to prepare password recovery');
+ const url=new URL('/auth/confirm',siteUrl());url.searchParams.set('purpose','management-reset');
+ url.hash=new URLSearchParams({token_hash:data.properties.hashed_token,type:'recovery'}).toString();
+ await sendEmail(email,'Set your VYNTRIO management password',`You requested a new password for your VYNTRIO management account.\n\nOpen your private password setup link:\n\n${url}\n\nSelect Continue to password reset, verify your authenticator, then choose a new password. The management dashboard stays locked until you sign in with your password and complete two-step verification.\n\nThis link is personal and expires. Do not forward it. If you did not request this, you can ignore this email; your password has not been changed. Request a fresh link at ${siteUrl()}/management/login?recover=1.\n\nVYNTRIO Agency`);
+}
