@@ -1,5 +1,7 @@
 # Verification and release status
 
+**Updated 14 November 2026:** Read [LIVE_AUDIT_STATUS.md](LIVE_AUDIT_STATUS.md) for current deployed checks, corrected defects and remaining blockers. The sections below describe the earlier source-preparation baseline, before private connections and the live audit.
+
 ## Automated checks
 - TypeScript route and application type checks.
 - Production Next.js build.

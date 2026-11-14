@@ -6,7 +6,7 @@ The source is prepared; private keys are intentionally not included. Keep the ex
 Your Supabase project is `kxwjkrfwtlgeeimceesj`:
 `https://supabase.com/dashboard/project/kxwjkrfwtlgeeimceesj`
 
-The app uses the public project URL `https://kxwjkrfwtlgeeimceesj.supabase.co`. The database migrations are in `supabase/migrations/`. For a new empty project, run 001, 002, 003, then 004. Do not rerun 001 on an existing installed database. Your project already has the base tables and team policies prepared. Run 003_reports.sql and 004_legacy_payment_link.sql during activation; these two updates can safely be repeated. Their final live readiness was not confirmed during packaging.
+The app uses the public project URL `https://kxwjkrfwtlgeeimceesj.supabase.co`. The database migrations are in `supabase/migrations/`. For a new empty project, run 001, 002, 003, 004, then 20261114064431_harden_portal_audit.sql. Do not rerun 001 on an existing installed database. The existing project was checked on 14 November 2026: base tables, team policies, reports and the legacy-link function are present, and the hardening migration has been applied. All 20 application tables have row security enabled; both application storage buckets are private. See LIVE_AUDIT_STATUS.md for outstanding launch checks.
 
 Under Supabase Auth, keep the Email provider enabled and disable public signups. Set the site URL to `https://vyntrio-agency.vercel.app` and allow `/auth/confirm` on your chosen site/preview host. Clients are invited from the owner dashboard. The first owner email defaults to `vyntrioagency@gmail.com`; change ADMIN_EMAIL before the first owner sign-in if needed.
 
