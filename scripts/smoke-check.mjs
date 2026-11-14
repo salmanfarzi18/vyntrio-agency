@@ -7,6 +7,7 @@ await expect('/login',200);await expect('/portal',307);await expect('/preview',4
 for(const path of ['/api/portal/health','/api/portal/export?type=clients','/api/portal/backup-download?id=unknown','/api/portal/files?id=unknown'])await expect(path,401);
 await expect('/api/portal/actions',403,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
 await expect('/api/portal/actions',401,{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:'{}'});
+await expect('/api/portal/backups',401,{method:'POST',headers:{Origin:base}});
 await expect('/api/inquiries',400,{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:'{}'});
 await expect('/api/cashfree-webhook',401,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
 response=await expect('/api/config',200);const config=await response.json();assert.deepEqual(Object.keys(config).sort(),['cashfreeMode','portalEnabled','turnstileSiteKey']);
