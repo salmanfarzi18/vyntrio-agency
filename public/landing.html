@@ -574,6 +574,13 @@
 @media(max-width:900px){[data-node-id="1:945"]{padding:48px 32px 28px}[data-node-id="1:947"]{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}[data-node-id="1:945"] [class]{white-space:normal;max-width:100%}}
 @media(max-width:600px){[data-node-id="1:945"]{padding:40px 20px 24px}[data-node-id="1:947"]{grid-template-columns:1fr!important;gap:32px;padding-bottom:32px}[data-node-id="1:1012"]{align-items:flex-start;gap:16px}[data-node-id="1:1015"]{gap:16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+.inquiry-fee-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;width:100%;padding:24px;border:1px solid #c8ccdf;border-radius:12px;background:#fff;box-shadow:0 1px 2px #13233e0d}.inquiry-fee-description{min-width:0}.inquiry-fee-card p{margin:0;white-space:normal;overflow-wrap:anywhere}.inquiry-fee-label{font-size:13px;font-weight:600;line-height:1.5;color:#59647c}.inquiry-fee-title{font-size:18px;font-weight:600;line-height:1.45;color:#14243a;margin-top:3px!important}.inquiry-fee-price{display:flex;flex-direction:column;align-items:flex-end;gap:2px;white-space:nowrap;flex-shrink:0}.inquiry-fee-price strong{font-size:36px;line-height:1.15;color:#004ac6;font-weight:750}.inquiry-fee-price span{font-size:13px;line-height:1.5;color:#59647c}
+@media(max-width:900px){#contact [data-node-id]{min-width:0}#contact [data-node-id="1:704"]{width:100%;min-width:0;max-width:100%;box-sizing:border-box}#contact [data-node-id="1:704"] .u43{min-width:0;max-width:100%;flex-shrink:1;white-space:normal}#contact [data-node-id="1:704"] p{white-space:normal;overflow-wrap:break-word}.inquiry-fee-card{padding:18px;gap:12px}.inquiry-fee-label{font-size:11px}.inquiry-fee-title{font-size:16px}.inquiry-fee-price strong{font-size:30px}.inquiry-fee-price span{font-size:11px}}
+
+#contact .inquiry-fee-card{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center}#contact [data-node-id="1:704"] .u355{width:auto;min-width:0;flex:1}
+
+@media(max-width:420px){[data-node-id="1:1030"]{display:none!important}[data-node-id="1:1049"]{gap:6px;flex-shrink:0}[data-node-id="1:1027"]{min-width:0}}
 </style></head><body><noscript><p style="padding:16px;background:#fff5db;color:#5c4b22">Enable JavaScript to submit your inquiry securely.</p></noscript><a href="#home" class="skip-link">Skip to content</a><div class="u369 u370 u30 u371 u32 u1 u2 u3 u4 u319 u372 u7 u14 u8 borderInset436" data-node-id="1:1022" data-name="Header">
       <div class="u10 u111 u112 u14 u152" data-node-id="1:1023" data-name="Header:shadow"></div>
       <div class="u7 u22 u23" data-node-id="1:1024" data-name="Container">
@@ -2064,34 +2071,7 @@
                       <p class="u229">project interest with VYNTRIO. After both steps are complete, your private workspace sign-in link will arrive by email.</p>
                     </div>
                   </div>
-                  <div class="u92 u30 u93 u32 u1 u94 u2 u3 u4 u172 u7 u133 u22 u23 borderInset397" data-node-id="1:716" data-name="Payment Badge Card">
-                    <div class="u7 u22 u23" data-node-id="1:717" data-name="Container">
-                      <div class="u40 u41 u42 u32 u1 u2 u34 u116 u7 u8">
-                        <div class="u1 u2 u3 u347 u4 u7 u22" data-node-id="1:718" data-name="Container">
-                          <div class="u1 u2 u3 u4 u7 u22 u23" data-node-id="1:719" data-name="Container">
-                            <div class="u43 u2 u3 u44 u45 u46 u47 u48 u7 u22 u71 u50 u51 u52 u53" data-node-id="1:720">
-                              <p class="u54">INQUIRY CONFIRMATION FEE</p>
-                            </div>
-                          </div>
-                          <div class="u1 u2 u3 u4 u7 u22 u23" data-node-id="1:721" data-name="Container">
-                            <div class="u43 u2 u3 u44 u45 u46 u47 u48 u7 u22 u58 u68 u128 u53" data-node-id="1:722">
-                              <p class="u73">Project Interest Registration</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="u1 u2 u3 u280 u7 u22" data-node-id="1:723" data-name="Container">
-                          <div class="u43 u2 u3 u56 u57 u46 u47 u48 u7 u22 u49 u348 u349 u53" data-node-id="1:724">
-                            <p class="u350">₹1</p>
-                          </div>
-                          <div class="u1 u2 u3 u280 u7 u22" data-node-id="1:725" data-name="Container">
-                            <div class="u43 u2 u3 u316 u317 u46 u47 u48 u7 u22 u71 u125 u349 u53" data-node-id="1:726">
-                              <p class="u126">All inclusive</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <div class="inquiry-fee-card" data-node-id="1:716" data-name="Payment Badge Card"><div class="inquiry-fee-description"><p class="inquiry-fee-label">INQUIRY CONFIRMATION FEE</p><p class="inquiry-fee-title">Project Interest Registration</p></div><div class="inquiry-fee-price"><strong>₹1</strong><span>All inclusive</span></div></div>
                   <div class="u1 u2 u3 u100 u4 u351 u7 u22 u23" data-node-id="1:727" data-name="What Happens Next">
                     <div class="u1 u2 u3 u4 u7 u22 u23" data-node-id="1:728" data-name="Container">
                       <div class="u43 u2 u3 u44 u45 u46 u47 u48 u7 u22 u58 u50 u51 u52 u23" data-node-id="1:729">
