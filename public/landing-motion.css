@@ -1,0 +1,86 @@
+/* Progressive enhancement: the original page stays readable without this script. */
+.vyn-reveal { transition: opacity .62s ease, transform .62s cubic-bezier(.22,1,.36,1); transition-delay: var(--vyn-delay, 0ms); }
+.vyn-reveal.vyn-pending { opacity: 0; transform: translate3d(0,24px,0); }
+.vyn-reveal.vyn-visible { opacity: 1; transform: none; }
+.vyn-reveal:focus-within { opacity: 1; transform: none; }
+.vyn-scroll-progress { position: fixed; inset: 0 0 auto; height: 3px; z-index: 80; pointer-events: none; background: #1554de; transform: scaleX(0); transform-origin: left; }
+[data-vyn-nav][aria-current="location"] { color: #004ac6; background: #fff; border-radius: 24px; }
+.vyn-compass { padding: clamp(64px,7vw,104px) 24px; background: linear-gradient(145deg,#f8f9ff 0%,#eef4ff 100%); color: #102033; isolation: isolate; }
+.vyn-compass *, .vyn-compass *::before, .vyn-compass *::after { box-sizing: border-box; }
+.vyn-compass-inner { width: min(100%,1280px); margin-inline: auto; }
+.vyn-compass-intro { max-width: 740px; margin-bottom: 34px; }
+.vyn-compass-eyebrow { display: inline-flex; gap: 9px; align-items: center; color: #1554de; font-size: 13px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.vyn-compass-eyebrow::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.vyn-compass h2 { margin: 16px 0 14px; font-size: clamp(30px,3.3vw,46px); line-height: 1.14; letter-spacing: -.035em; font-weight: 750; }
+.vyn-compass-intro>p { margin: 0; color: #566079; font-size: 17px; line-height: 1.65; }
+.vyn-compass-layout { display: grid; grid-template-columns: 1.05fr 1fr; gap: 28px; align-items: stretch; }
+.vyn-compass-controls { min-width: 0; background: #fff; border: 1px solid #dce4f4; border-radius: 24px; padding: 30px; box-shadow: 0 3px 4px #173c7e03; }
+.vyn-compass fieldset { min-width: 0; border: 0; margin: 0; padding: 0; }
+.vyn-compass legend, .vyn-stage-label { padding: 0; margin: 0 0 18px; font-size: 17px; font-weight: 650; line-height: 1.4; }
+.vyn-compass-step { display: inline-flex; width: 27px; height: 27px; align-items: center; justify-content: center; border-radius: 50%; background: #eaf1ff; color: #1554de; font-size: 12px; margin-right: 9px; vertical-align: middle; }
+.vyn-goals { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; }
+.vyn-goal { position: relative; display: flex; min-width: 0; cursor: pointer; }
+.vyn-goal input { position: absolute; top: 15px; left: 15px; width: 16px; height: 16px; margin: 0; accent-color: #1554de; }
+.vyn-goal-content { display: flex; flex-direction: column; justify-content: center; width: 100%; min-height: 100px; border: 1px solid #e0e6f1; border-radius: 14px; padding: 15px 12px 15px 40px; background: #fff; transition: border-color .2s, background-color .2s, box-shadow .2s; }
+.vyn-goal strong { display: block; font-size: 15px; font-weight: 650; line-height: 1.35; }
+.vyn-goal small { display: block; margin-top: 5px; color: #626c80; font-size: 12px; line-height: 1.4; }
+.vyn-goal input:checked+.vyn-goal-content { border-color: #1554de; background: #f2f6ff; box-shadow: 0 0 0 1px #1554de; }
+.vyn-goal input:focus-visible+.vyn-goal-content { outline: 3px solid #8db4ff; outline-offset: 4px; }
+.vyn-stage-label { display: block; margin: 28px 0 12px; }
+.vyn-compass select { width: 100%; min-height: 50px; padding: 12px 36px 12px 14px; color: #102033; background: #fafbff; border: 1px solid #dce4f4; border-radius: 11px; font: inherit; font-size: 14px; }
+.vyn-compass select:focus-visible, .vyn-compass button:focus-visible, .vyn-compass a:focus-visible { outline: 3px solid #8db4ff; outline-offset: 4px; }
+.vyn-compass-privacy { display: flex; align-items: flex-start; gap: 8px; margin: 18px 0 0; color: #707b8e; font-size: 12px; line-height: 1.6; }
+.vyn-compass-privacy svg { flex: 0 0 15px; margin-top: 2px; }
+.vyn-compass-result { position: relative; min-width: 0; padding: 32px; border-radius: 24px; background: #102b57; color: #fff; display: flex; flex-direction: column; overflow: hidden; }
+.vyn-compass-result::before { content: ''; position: absolute; width: 270px; height: 270px; border: 1px solid #ffffff0d; border-radius: 50%; right: -130px; top: -100px; pointer-events: none; }
+.vyn-roadmap-kicker { margin: 0 0 12px; color: #a9c9ff; font-size: 12px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
+.vyn-compass h3 { position: relative; margin: 0 0 10px; font-size: clamp(23px,2.1vw,30px); line-height: 1.2; letter-spacing: -.025em; }
+.vyn-roadmap-summary { margin: 0; color: #c5d5ed; font-size: 14px; line-height: 1.65; min-height: 46px; }
+.vyn-roadmap { list-style: none; padding: 0; margin: 26px 0; display: grid; gap: 0; }
+.vyn-roadmap li { position: relative; display: grid; grid-template-columns: 34px minmax(0,1fr); column-gap: 13px; padding-bottom: 18px; }
+.vyn-roadmap li:last-child { padding-bottom: 0; }
+.vyn-roadmap li:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 34px; bottom: 5px; width: 1px; background: #8eafff35; }
+.vyn-roadmap-number { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid #9abfff40; border-radius: 10px; color: #bcd5ff; background: #ffffff08; font-size: 11px; font-weight: 650; }
+.vyn-roadmap strong { display: block; color: #fff; font-size: 14px; line-height: 1.4; }
+.vyn-roadmap small { display: block; margin-top: 4px; color: #b5c7e2; font-size: 12px; line-height: 1.6; }
+.vyn-roadmap-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: auto; }
+.vyn-use-roadmap { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 49px; padding: 13px 19px; color: #1554de; background: #fff; border: 1px solid #fff; border-radius: 11px; text-decoration: none; font-size: 14px; font-weight: 700; line-height: 1.35; }
+.vyn-copy-roadmap { min-height: 44px; padding: 8px 0; color: #d6e4ff; background: transparent; border: 0; font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.vyn-compass-note { margin: 18px 0 0; color: #aabfdd; font-size: 11px; line-height: 1.6; }
+.vyn-compass-status { min-height: 20px; margin: 14px 0 0; color: #1554de; font-size: 13px; line-height: 1.5; }
+@media (hover:hover) and (pointer:fine) {
+  .service-card { transition: box-shadow .22s ease, border-color .22s ease; }
+  .service-card:hover { border-color: #b2c9ff; box-shadow: 0 12px 32px #193e7e0c; }
+  .vyn-goal:hover .vyn-goal-content { border-color: #a4bff5; }
+  .vyn-use-roadmap:hover { background: #eaf1ff; }
+}
+@media (max-width:800px) {
+  .vyn-compass { padding: 64px 22px; }
+  .vyn-compass-layout { grid-template-columns: minmax(0,1fr); gap: 18px; }
+  .vyn-compass-controls, .vyn-compass-result { padding: 25px; border-radius: 20px; }
+  .vyn-compass h2 { font-size: clamp(30px,6vw,40px); }
+  .vyn-compass-intro>p { font-size: 15px; }
+  .vyn-roadmap-summary { min-height: 0; }
+  .vyn-reveal { transition-duration: .48s; }
+  .vyn-reveal.vyn-pending { transform: translate3d(0,16px,0); }
+}
+@media (max-width:380px) {
+  .vyn-compass { padding-inline: 16px; }
+  .vyn-compass-controls, .vyn-compass-result { padding: 20px; }
+  .vyn-goals { gap: 9px; }
+  .vyn-goal-content { padding-left: 33px; padding-right: 8px; min-height: 108px; }
+  .vyn-goal input { left: 10px; }
+  .vyn-goal strong { font-size: 13px; }
+  .vyn-goal small { font-size: 11px; }
+  .vyn-use-roadmap { width: 100%; }
+}
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior: auto !important; }
+  .vyn-reveal, .vyn-reveal.vyn-pending, .vyn-reveal.vyn-visible { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .vyn-scroll-progress { display: none; }
+  .vyn-compass *, .service-card { transition: none !important; animation: none !important; }
+}
+@media print {
+  .vyn-scroll-progress { display: none; }
+  .vyn-reveal.vyn-pending { opacity: 1; transform: none; }
+}

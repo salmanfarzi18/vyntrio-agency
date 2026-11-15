@@ -1,4 +1,7 @@
 (()=>{'use strict';
+// Load optional landing-page enhancements after their stylesheet is ready.
+// A failed enhancement never blocks the inquiry or payment handlers below.
+const motionStyle=document.createElement('link');motionStyle.rel='stylesheet';motionStyle.href='/landing-motion.css';motionStyle.onload=()=>{const script=document.createElement('script');script.src='/landing-motion.js';script.defer=true;document.body.append(script);};document.head.append(motionStyle);
 const account=document.querySelector('[data-node-id="1:1060"]');if(account){const a=document.createElement('a');a.href='/login';a.className='portal-login';a.setAttribute('aria-label','Client login');a.innerHTML=account.innerHTML+'<span>Login</span>';account.replaceWith(a);}
 const mobile=document.querySelector('#mobileMenu');if(mobile){const a=document.createElement('a');a.href='/login';a.textContent='Client login';mobile.append(a);}
 const style=document.createElement('style');style.textContent='.portal-login{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #d8e3fc;border-radius:24px;background:#f0f5ff;padding:8px 12px;color:#1554de;font-size:12px;font-weight:600;white-space:nowrap}.portal-login>svg{width:19px;height:19px}.portal-login>div{display:none}.vyn-honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}.vyn-security-check{margin:15px 0}';document.head.append(style);
