@@ -6,4 +6,6 @@ node_modules/
 *.tsbuildinfo
 /backups/
 test-results/
+/audit/
+/.netlify/
 /supabase/.temp/

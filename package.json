@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
-    "build": "next build",
+    "build": "node scripts/prepare-launch.cjs && next build",
     "start": "next start --hostname 127.0.0.1",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/*.test.ts"
@@ -24,7 +24,8 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wawoff2": "2.0.1"
   },
   "engines": {
     "node": ">=22.0.0"

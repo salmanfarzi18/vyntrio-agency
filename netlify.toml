@@ -1,0 +1,50 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# The Next.js adapter does not rewrite to public files; use CDN rewrites here.
+[[redirects]]
+  from = "/"
+  to = "/landing.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 200
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 200
+[[redirects]]
+  from = "/refunds"
+  to = "/refunds.html"
+  status = 200
+[[redirects]]
+  from = "/cookies"
+  to = "/cookies.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000"
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "private, no-store"
+    X-Robots-Tag = "noindex, nofollow"
+
+[functions."daily-maintenance"]
+  schedule = "0 2 * * *"

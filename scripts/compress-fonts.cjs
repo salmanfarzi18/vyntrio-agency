@@ -1,0 +1,4 @@
+const fs=require('node:fs/promises');
+const {createHash}=require('node:crypto');
+const {compress}=require('wawoff2');
+async function main(){let html=await fs.readFile('public/landing.html','utf8');let before=0,after=0;for(const name of new Set([...html.matchAll(/\/assets\/([a-f0-9]{16}\.ttf)/g)].map(m=>m[1]))){const bytes=await fs.readFile('public/assets/'+name),out=Buffer.from(await compress(bytes)),file=createHash('sha256').update(out).digest('hex').slice(0,16)+'.woff2';await fs.writeFile('public/assets/'+file,out);html=html.split('/assets/'+name).join('/assets/'+file);before+=bytes.length;after+=out.length;await fs.unlink('public/assets/'+name);}html=html.replaceAll("format('truetype')","format('woff2')");await fs.writeFile('public/landing.html',html);console.log(JSON.stringify({fontBytesBefore:before,fontBytesAfter:after}));}main().catch(e=>{console.error(e.message);process.exitCode=1;});

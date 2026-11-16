@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /portal
+Disallow: /management
+Disallow: /auth/
+Disallow: /login
+Disallow: /payment/
+Disallow: /documents/
+Disallow: /preview
+Disallow: /landing.html
+
+Sitemap: https://vyntrio-agency.vercel.app/sitemap.xml
