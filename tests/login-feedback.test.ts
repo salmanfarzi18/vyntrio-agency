@@ -26,7 +26,7 @@ async function loginHarness({allowed=true,emailFails=false,captchaFails=false,re
 test('Eligible login confirms the inbox only after delivery accepts the email',async()=>{
  const {response,calls,result}=await loginHarness();
  assert.equal(response.status,200);assert.equal(response.headers.get('Cache-Control'),'no-store');assert.equal(result.next,'check_inbox');
- assert.deepEqual(calls,['login-ip','login-email','captcha','access','email:client@example.invalid']);
+ assert.deepEqual(calls,['client-login-ip','captcha','client-login-cooldown','client-login-email','access','email:client@example.invalid']);
 });
 test('Incomplete inquiry receives the inquiry next step and never a sign-in email',async()=>{
  const {response,calls,result}=await loginHarness({allowed:false});
@@ -34,7 +34,7 @@ test('Incomplete inquiry receives the inquiry next step and never a sign-in emai
 });
 test('Email failure does not claim delivery and CAPTCHA failure does not inspect eligibility',async()=>{
  const failedEmail=await loginHarness({emailFails:true});assert.equal(failedEmail.response.status,503);assert.equal(failedEmail.result.next,undefined);
- const failedCaptcha=await loginHarness({captchaFails:true});assert.equal(failedCaptcha.response.status,503);assert(!failedCaptcha.calls.includes('access'));assert(!failedCaptcha.calls.some(c=>c.startsWith('email:')));
+ const failedCaptcha=await loginHarness({captchaFails:true});assert.equal(failedCaptcha.response.status,503);assert(!failedCaptcha.calls.includes('access'));assert(!failedCaptcha.calls.includes('client-login-email'));assert(!failedCaptcha.calls.some(c=>c.startsWith('email:')));
 });
 
 test('Management accounts are directed to password sign-in without sending a client magic link',async()=>{
