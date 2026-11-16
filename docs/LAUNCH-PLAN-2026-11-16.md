@@ -64,3 +64,6 @@ Netlify Free supports commercial projects but current credit-based accounts have
 - https://supabase.com/docs/guides/platform/free-project-pausing
 - https://developers.google.com/search/docs/fundamentals/get-on-google
 - https://www.meity.gov.in/documents/act-and-policies/digital-personal-data-protection-rules-2025-gDOxUjMtQWa
+
+## Migration progress
+Netlify account and selected GitHub repository connection completed. The first deployment from saas-upgrade succeeded as a private project at inspiring-gumption-02e628.netlify.app. Ten non-secret settings are saved. Private service values, external hostname registrations and production cutover remain pending. The existing Vercel address still serves the previous production commit. Browser checks of the private Netlify build verified loaded images/fonts, policy routes, cookie controls, mobile width and empty-field validation; a menu-label defect was corrected in source for the next build.
