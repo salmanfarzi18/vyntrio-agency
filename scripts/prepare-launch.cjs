@@ -41,7 +41,8 @@ const pages={
 let html=fs.readFileSync('public/landing.html','utf8');
 html=html.replace(/<title>[^<]*<\/title>/,`<title>${esc(title)}</title>`).replace(/<meta name="description"[^>]*>/,`<meta name="description" content="${esc(description)}">`);
 const extra=`<link rel="canonical" href="${site}/"><meta name="robots" content="${isPreview?'noindex,nofollow':'index,follow'}"><meta property="og:type" content="website"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${site}/"><meta property="og:image" content="${site}/social-preview.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(description)}"><meta name="twitter:image" content="${site}/social-preview.png">`;
-html=html.replace(/<!-- launch-meta:start -->[\s\S]*?<!-- launch-meta:end -->/,'').replace('</head>',`<!-- launch-meta:start -->${extra}<!-- launch-meta:end --></head>`);
+const verificationMeta=!isPreview&&site==='https://vyntrioagency.netlify.app'?'<meta name="google-site-verification" content="kkAD6mXIul1xltyxOEP3K28hJtgK2uHgL3W--iTzyJg">':'';
+html=html.replace(/<!-- launch-meta:start -->[\s\S]*?<!-- launch-meta:end -->/,'').replace('</head>',`<!-- launch-meta:start -->${extra}${verificationMeta}<!-- launch-meta:end --></head>`);
 if(!html.includes('/landing-launch.js'))html=html.replace('</body>','<script src="/landing-launch.js" defer></script></body>');
 // Never present unverified design-template testimonials as real client evidence.
 html=html.replace(/<section\b[^>]*\bid="reviews"[^>]*>[\s\S]*?<\/section>/,'');
