@@ -48,3 +48,6 @@
 
 [functions."daily-maintenance"]
   schedule = "0 2 * * *"
+
+[functions."email-retries"]
+  schedule = "*/15 * * * *"
