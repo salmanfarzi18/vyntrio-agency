@@ -39,7 +39,7 @@ export async function restoreDrill(options:{source:SupabaseClient;target:Supabas
  const users=checked(await target.auth.admin.listUsers({page:1,perPage:1}));
  if(users.data.users.length)throw Error('The restore-test project is not empty. No records were overwritten.');
  const buckets=checked(await target.storage.listBuckets()).data||[];
- if(!buckets.some(b=>b.id==='project-files'&&!b.public))throw Error('Restore target requires a private project-files bucket.');
+ if(!['project-files',bucket].every(id=>buckets.some(b=>b.id===id&&!b.public)))throw Error('Restore target requires private file and backup buckets.');
  for(const table of restoreTables){
   const result=checked(await target.from(table).select('*',{count:'exact',head:true}));
   if(result.count&&(table!=='agencies'||result.count!==1))throw Error('The restore-test database is not empty. No records were overwritten.');
@@ -49,13 +49,13 @@ export async function restoreDrill(options:{source:SupabaseClient;target:Supabas
  const encrypted=checked(await source.storage.from(bucket).download(latest.object_path)).data;
  const snapshot=decodeSnapshot(Buffer.from(await encrypted!.arrayBuffer()),recoveryKey);
  // Decrypt/validate every file before writing any customer record to the target.
- const files:Array<{path:string;mime:string;bytes:Buffer;hash:string}>=[];
+ const files:Array<{path:string;backupPath:string;encrypted:Buffer;mime:string;bytes:Buffer;hash:string}>=[];
  for(const file of snapshot.tables.files){
   if(file.backup_status!=='completed'||!file.backup_path?.startsWith('files/')||typeof file.path!=='string')throw Error('Snapshot contains an unrecoverable file.');
   const blob=checked(await source.storage.from(bucket).download(file.backup_path)).data;
-  const bytes=decryptBackup(Buffer.from(await blob!.arrayBuffer()),recoveryKey);
+  const encryptedBytes=Buffer.from(await blob!.arrayBuffer()),bytes=decryptBackup(encryptedBytes,recoveryKey);
   if(bytes.length!==file.size)throw Error('Recovered file size does not match the backup manifest.');
-  files.push({path:file.path,mime:file.mime_type,bytes,hash:createHash('sha256').update(bytes).digest('hex')});
+  files.push({path:file.path,backupPath:file.backup_path,encrypted:encryptedBytes,mime:file.mime_type,bytes,hash:createHash('sha256').update(bytes).digest('hex')});
  }
  const ids=new Map<string,string>();
  for(const profile of snapshot.tables.profiles){
@@ -88,6 +88,13 @@ export async function restoreDrill(options:{source:SupabaseClient;target:Supabas
   checked(await target.storage.from('project-files').upload(file.path,file.bytes,{contentType:file.mime,upsert:false}));
   const recovered=checked(await target.storage.from('project-files').download(file.path)).data;
   if(createHash('sha256').update(Buffer.from(await recovered!.arrayBuffer())).digest('hex')!==file.hash)throw Error('Recovered file integrity check failed.');
+  checked(await target.storage.from(bucket).upload(file.backupPath,file.encrypted,{contentType:'application/octet-stream',upsert:false}));
+  const backupCopy=checked(await target.storage.from(bucket).download(file.backupPath)).data;
+  if(createHash('sha256').update(decryptBackup(Buffer.from(await backupCopy!.arrayBuffer()),recoveryKey)).digest('hex')!==file.hash)throw Error('Recovered file backup integrity check failed.');
  }
- return {ok:true,snapshotId:latest.id,snapshotCreatedAt:snapshot.createdAt,targetProject:'frrmvmvittfhsmdchrrd',records:Object.values(manifest).reduce((n,t)=>n+t.rows,0),tables:manifest,profiles:ids.size,files:files.length,filesVerified:true,notificationsSuppressed:true,paymentsNotInvoked:true,elapsedMs:Date.now()-started,completedAt:new Date().toISOString()};
+ const snapshotBytes=Buffer.from(await encrypted!.arrayBuffer());
+ checked(await target.storage.from(bucket).upload(latest.object_path,snapshotBytes,{contentType:'application/octet-stream',upsert:false}));
+ const snapshotCopy=checked(await target.storage.from(bucket).download(latest.object_path)).data;
+ if(createHash('sha256').update(Buffer.from(await snapshotCopy!.arrayBuffer())).digest('hex')!==createHash('sha256').update(snapshotBytes).digest('hex'))throw Error('Recovered snapshot integrity check failed.');
+ return {ok:true,snapshotId:latest.id,snapshotCreatedAt:snapshot.createdAt,targetProject:'frrmvmvittfhsmdchrrd',records:Object.values(manifest).reduce((n,t)=>n+t.rows,0),tables:manifest,profiles:ids.size,files:files.length,filesVerified:true,encryptedFileCopiesVerified:true,snapshotCopyVerified:true,notificationsSuppressed:true,paymentsNotInvoked:true,elapsedMs:Date.now()-started,completedAt:new Date().toISOString()};
 }
