@@ -51,3 +51,6 @@
 
 [functions."email-retries"]
   schedule = "*/15 * * * *"
+
+[functions."restore-verification"]
+  node_bundler = "esbuild"
