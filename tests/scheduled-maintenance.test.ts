@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 import ts from 'typescript';
+import {dailyBackupId} from '../lib/backup-claim';
 import {assert as check,errorResponse,safeEqual} from '../lib/security';
 
 async function worker(name:string,enabled=true,base='https://example.invalid',ok=true){
@@ -31,11 +32,12 @@ test('Scheduled workers reject HTTP configuration and report backend failure',as
 async function maintenance(task:string,authorized=true,filesPending=0){
  const calls:string[]=[],exports:Record<string,any>={};
  const context=vm.createContext({exports,Response,URL,Date,require:(name:string)=>{
-  if(name==='@/lib/config')return {env:()=> 'private-test-cron'};
+  if(name==='@/lib/config')return {env:()=> 'private-test-cron',AGENCY_ID:'test-agency'};
   if(name==='@/lib/security')return {assert:check,errorResponse,safeEqual};
   if(name==='@/lib/supabase')return {adminDb:()=>{calls.push('db');return {from:()=>({delete:()=>({lt:async()=>{calls.push('cleanup');}})})};}};
   if(name==='@/lib/notifications')return {dispatchEmails:async(count:number)=>{calls.push('email:'+count);return {sent:0};}};
-  if(name==='@/lib/backups')return {createBackup:async()=>{calls.push('backup');return {id:'test',filesPending};}};
+  if(name==='@/lib/backup-claim')return {dailyBackupId};
+  if(name==='@/lib/backups')return {createBackup:async(id:string)=>{assert.equal(id,dailyBackupId('test-agency'));calls.push('backup');return {id:'test',filesPending};}};
   throw Error('Unexpected import '+name);
  }});
  const source=await readFile('app/api/cron/maintenance/route.ts','utf8');
