@@ -4,10 +4,12 @@ import {adminDb} from './supabase';
 import {env,siteUrl} from './config';
 import {workspaceAccess,workspaceAccessNotice} from './workspace-access';
 import {assert} from './security';
+import {businessEmailBridge,businessEmailConfigured} from './business-email';
 export async function bridge(action:'email'|'backup'|'exportLegacy'|'sheetMirror'|'health',payload:Record<string,unknown>){const rawBody=JSON.stringify({id:randomUUID(),action,...payload}),timestamp=String(Date.now());const signature=createHmac('sha256',env('EMAIL_BRIDGE_SECRET')).update(timestamp+rawBody).digest('base64');const response=await fetch(env('EMAIL_BRIDGE_URL'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saasBridge',rawBody,timestamp,signature}),redirect:'follow',signal:AbortSignal.timeout(20000)});const result=await response.json();if(!response.ok||result.ok!==true)throw new Error('Google delivery bridge unavailable');return result;}
 export async function sendEmail(to:string,subject:string,body:string,id= randomUUID()){
  if(process.env.EMAIL_PROVIDER==='resend'){const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+env('RESEND_API_KEY'),'Content-Type':'application/json','Idempotency-Key':id},body:JSON.stringify({from:env('EMAIL_FROM'),to:[to],subject,text:body}),signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Email delivery unavailable');return;}
- await bridge('email',{id,to,subject,body});
+ if(businessEmailConfigured())await businessEmailBridge('email',{id,to,subject,body});
+ else await bridge('email',{id,to,subject,body});
 }
 export async function queueEmail(eventKey:string,to:string,subject:string,body:string){const {error}=await adminDb().from('notification_outbox').upsert({event_key:eventKey,recipient:to,subject,body},{onConflict:'event_key',ignoreDuplicates:true});if(error)throw error;}
 export async function queueWorkspaceAccess(inquiryId:string){

@@ -8,7 +8,7 @@ import {z} from 'zod';
 import {assert as check,errorResponse,readJson,requireSameOrigin} from '../lib/security';
 
 async function load(file:string,dependencies:Record<string,unknown>,extra:Record<string,unknown>={}){
- const exports:Record<string,any>={};const context=vm.createContext({exports,Response,URL,URLSearchParams,AbortSignal,process:{env:{EMAIL_PROVIDER:'resend'}},...extra,require:(name:string)=>{if(name in dependencies)return dependencies[name];throw Error('Unexpected import '+name);}});
+ const exports:Record<string,any>={};const context=vm.createContext({exports,Response,URL,URLSearchParams,AbortSignal,process:{env:{EMAIL_PROVIDER:'resend'}},...extra,require:(name:string)=>{if(name in dependencies)return dependencies[name];if(name==='./business-email')return {businessEmailConfigured:()=>false};throw Error('Unexpected import '+name);}});
  vm.runInContext(ts.transpileModule(await readFile(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,context);return exports;
 }
 test('Management recovery generates a recovery token and a clearly labelled private password email',async()=>{
